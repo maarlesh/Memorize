@@ -14,27 +14,32 @@ struct ContentView: View {
             CardView(isTurned: true)
             CardView()
             CardView()
-        }
+        }.padding(12)
     }
 }
 
 
 struct CardView: View{
-    var isTurned: Bool = false;
+    @State var isTurned: Bool = false;
     
     var body: some View {
-        ZStack {
+        ZStack (content: {
+            let base  = RoundedRectangle(cornerRadius: 12);
             if isTurned {
-                RoundedRectangle(cornerRadius: 12)
+                base
                     .foregroundColor(.white)
-                RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(lineWidth: 2)
-                        .foregroundColor(.cyan)
+                base
+                    .strokeBorder(lineWidth: 2)
+                    .foregroundColor(.cyan)
                 Text("❤️").font(.largeTitle)
             }else{
-                RoundedRectangle(cornerRadius: 12).foregroundColor(.cyan)
+                base.foregroundColor(.cyan)
             }
         }
+        ).onTapGesture {
+            isTurned.toggle()
+        }
+        .frame(height: 200)
     }
 }
 
