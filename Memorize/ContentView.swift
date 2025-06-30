@@ -1,30 +1,48 @@
 import SwiftUI
 
 struct ContentView: View {
-    let emojis : Array<String> = [
-        "😂","😳", "😴", "😂", "😉", "💁🏻", "🥰", "😇", "🤩", "😡",
-    ];
     @State var cardCount : Int = 4;
+    @State var currentTheme : MemorizeTheme = MemorizeTheme.halloween;
+    @State private var shuffledEmojis: [String] = []
     var body: some View {
         VStack{
+            Text(
+                "Memorize!"
+            ).font(.largeTitle)
             ScrollView{
                 LazyVGrid(columns: [
                     GridItem(),
                     GridItem(),
-    //                GridItem(), GridItem(), GridItem()
                 ]){
-                    ForEach(0..<cardCount, id: \.self) { index in
-                        CardView(content: emojis[index])
+                    ForEach(0..<min(cardCount, shuffledEmojis.count), id: \.self) { index in
+                        CardView(content: shuffledEmojis[index])
                     }.aspectRatio(2/3, contentMode: .fit)
                 }
             }
-            Spacer()
+            HStack{
+                ForEach(MemorizeTheme.allCases, id: \.self){
+                    theme in
+                    Button(
+                        action : {
+                            currentTheme = theme
+                            shuffledEmojis = theme.emojis.shuffled()
+                            print("Current Theme is \(theme)");
+                        }
+                    ) {
+                        Text(theme.rawValue).font(.title3)
+                    }
+                     
+                }
+            }.padding(.vertical, 10)
             HStack{
                 cardModifier(by: -1, label: "rectangle.stack.badge.minus.fill")
                 Spacer()
                 cardModifier(by: +1, label: "rectangle.stack.badge.plus.fill")
             }.imageScale(.large).font(.largeTitle)
-        }.padding()
+        }.padding().onAppear {
+            shuffledEmojis = currentTheme.emojis.shuffled()
+            cardCount = min(cardCount, shuffledEmojis.count)
+        }
     }
     
     func cardModifier(by offset : Int, label : String) -> some View {
@@ -32,7 +50,7 @@ struct ContentView: View {
             cardCount += offset
         }) {
             Image(systemName: label)
-        }.disabled(cardCount + offset < 1 || cardCount + offset > emojis.count)
+        }.disabled(cardCount + offset < 1 || cardCount + offset > currentTheme.emojis.count)
     }
 }
 
@@ -63,5 +81,25 @@ struct CardView: View{
 struct ContentPreview : PreviewProvider {
     static var previews : some View {
         ContentView()
+    }
+}
+
+
+enum MemorizeTheme : String, CaseIterable {
+    case halloween = "👻 Halloween"
+    case emojis = "😊 Emojis"
+    case love = "❤️ Love"
+}
+
+extension MemorizeTheme {
+    var emojis: [String] {
+        switch self {
+        case .halloween:
+            return ["🎃", "👻", "🕸️", "🧛", "🧟", "🕷️"]
+        case .emojis:
+            return ["😂", "😳", "😴", "😉", "💁🏻", "🥰", "😇", "🤩", "😡"]
+        case .love:
+            return ["❤️", "💕", "💘", "💖", "😍", "😘", "💌"]
+        }
     }
 }
