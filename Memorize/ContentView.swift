@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    var viewModel = EmojiMemorizeGame();
+    
     @State var cardCount : Int = 4;
     @State var currentTheme : MemorizeTheme = MemorizeTheme.halloween;
     @State private var shuffledEmojis: [String] = []
@@ -14,7 +16,7 @@ struct ContentView: View {
                     GridItem(),
                     GridItem(),
                 ]){
-                    ForEach(0..<min(cardCount, shuffledEmojis.count), id: \.self) { index in
+                    ForEach(shuffledEmojis.indices, id: \.self) { index in
                         CardView(content: shuffledEmojis[index])
                     }.aspectRatio(2/3, contentMode: .fit)
                 }
@@ -26,7 +28,6 @@ struct ContentView: View {
                         action : {
                             currentTheme = theme
                             shuffledEmojis = theme.emojis.shuffled()
-                            print("Current Theme is \(theme)");
                         }
                     ) {
                         Text(theme.rawValue).font(.title3)
@@ -84,22 +85,3 @@ struct ContentPreview : PreviewProvider {
     }
 }
 
-
-enum MemorizeTheme : String, CaseIterable {
-    case halloween = "👻 Halloween"
-    case emojis = "😊 Emojis"
-    case love = "❤️ Love"
-}
-
-extension MemorizeTheme {
-    var emojis: [String] {
-        switch self {
-        case .halloween:
-            return ["🎃", "👻", "🕸️", "🧛", "🧟", "🕷️"]
-        case .emojis:
-            return ["😂", "😳", "😴", "😉", "💁🏻", "🥰", "😇", "🤩", "😡"]
-        case .love:
-            return ["❤️", "💕", "💘", "💖", "😍", "😘", "💌"]
-        }
-    }
-}
