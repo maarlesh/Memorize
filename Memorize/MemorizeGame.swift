@@ -31,7 +31,7 @@ struct MemorizeGame<CardContent>{
     }
     
     struct Card{
-        var isFaceUp : Bool = false;
+        var isFaceUp : Bool = true;
         var isMatched : Bool = false;
         var content : CardContent
     }

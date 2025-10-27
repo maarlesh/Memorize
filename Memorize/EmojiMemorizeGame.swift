@@ -8,15 +8,35 @@ import Foundation
 import SwiftUI
 
 class EmojiMemorizeGame{
-    let game = MemorizeGame<String>(noOfPairCards: 3) { pairIndex in
-        ["🎃", "👻", "🕷️"][pairIndex]
+    
+    private static let emojis = ["🎃", "👻", "🕸️", "🧛", "🧟", "🕷️"];
+    
+    private var model = createMemoryGame()
+    
+    private static func createMemoryGame() -> MemorizeGame<String>{
+        return MemorizeGame(noOfPairCards: 4, cardContentFactory: { (pairIndex : Int) -> String in
+                if emojis.indices.contains(pairIndex){
+                    EmojiMemorizeGame.emojis[pairIndex]
+                }else{
+                    EmojiMemorizeGame.emojis[0]
+                }
+            }
+        )
     }
 
     var cards : Array<MemorizeGame<String>.Card>{
-        return game.cards
+        return model.cards
     }
     
     func choose(_ card: MemorizeGame<String>.Card){
-        game.chooseCard(card)
+        model.chooseCard(card)
+    }
+    
+    var getCurrentTheme : MemorizeTheme {
+        return model.currentTheme
+    }
+    
+    func setCurrentTheme(theme : MemorizeTheme) {
+        model.currentTheme = theme
     }
 }
